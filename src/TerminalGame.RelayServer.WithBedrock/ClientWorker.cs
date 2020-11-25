@@ -40,7 +40,7 @@ namespace TerminalGame.RelayServer.WithBedrock
                 return;
             }
 
-            var lines =  new string[]
+            var lines = new string[]
             {
                 "{\"payloadType\":\"INIT\",\"source\":\"1\"}",
                 "{\"payloadType\":\"MESSAGE\",\"destination\":\"0\",\"source\":\"1\",\"payload\":\"Payload0\"}",
@@ -63,7 +63,8 @@ namespace TerminalGame.RelayServer.WithBedrock
 
             await _connection.Transport.Output.FlushAsync(_hostApplicationLifetime.ApplicationStopping);
 
-            void WriteLineHeader(ConnectionContext connection, string line) {
+            static void WriteLineHeader(ConnectionContext connection, string line)
+            {
                 var sizeSpan = connection.Transport.Output.GetSpan(4);
                 BinaryPrimitives.WriteInt32BigEndian(sizeSpan, line.Length);
 
@@ -71,7 +72,7 @@ namespace TerminalGame.RelayServer.WithBedrock
             }
 
 
-            void WriteLine(ConnectionContext connection, Encoding encoding, string line)
+            static void WriteLine(ConnectionContext connection, Encoding encoding, string line)
             {
                 var length = encoding.GetByteCount(line);
                 var payloadSpan = connection.Transport.Output.GetSpan(length);
