@@ -68,7 +68,7 @@ namespace TerminalGame.RelayServer.WithBedrock
                 var sizeSpan = connection.Transport.Output.GetSpan(4);
                 BinaryPrimitives.WriteInt32BigEndian(sizeSpan, line.Length);
 
-                connection.Transport.Output.Write(sizeSpan);
+                connection.Transport.Output.Write(sizeSpan[..4]);
             }
 
 
@@ -77,7 +77,6 @@ namespace TerminalGame.RelayServer.WithBedrock
                 var length = encoding.GetByteCount(line);
                 var payloadSpan = connection.Transport.Output.GetSpan(length);
                 encoding.GetBytes(line, payloadSpan);
-
                 connection.Transport.Output.Write(payloadSpan);
             }
         }
