@@ -77,7 +77,7 @@ namespace TerminalGame.RelayServer.WithBedrock
                 var length = encoding.GetByteCount(line);
                 var payloadSpan = connection.Transport.Output.GetSpan(length);
                 encoding.GetBytes(line, payloadSpan);
-                connection.Transport.Output.Write(payloadSpan);
+                connection.Transport.Output.Write(payloadSpan[..length]);
             }
         }
 
