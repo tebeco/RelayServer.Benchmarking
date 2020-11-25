@@ -34,6 +34,7 @@ namespace TerminalGame.RelayServer.WithBedrock
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddHostedService<ClientWorker>();
                 });
     }
 }
