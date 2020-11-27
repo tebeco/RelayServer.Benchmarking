@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TerminalGame.RelayServer.Domain;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {
@@ -15,7 +16,6 @@ namespace TerminalGame.RelayServer.WithBedrock
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
-        private Client? _client;
         private ConnectionContext? _connection;
 
         public ClientWorker(IServiceProvider serviceProvider, IHostApplicationLifetime hostApplicationLifetime)
@@ -28,18 +28,38 @@ namespace TerminalGame.RelayServer.WithBedrock
         {
             await Task.Yield();
 
-            _client = new ClientBuilder(_serviceProvider)
+            var client = new ClientBuilder(_serviceProvider)
                         .UseSockets()
                         .UseConnectionLogging("Client")
                         .Build();
 
-            _connection = await _client.ConnectAsync(new IPEndPoint(IPAddress.IPv6Loopback, 530), _hostApplicationLifetime.ApplicationStopping);
+            _connection = await client.ConnectAsync(new IPEndPoint(IPAddress.IPv6Loopback, 530), _hostApplicationLifetime.ApplicationStopping);
 
             if (_connection == null)
             {
                 return;
             }
 
+            //*/
+            var protocol = new MyClientProtocol(_connection);
+            await protocol.SendAsync(new InitMessage("1"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload0"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload1"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload2"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload3"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload4"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload5"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload6"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload7"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload8"));
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload9"));
+            /*/
+            await RawSendAsync(_connection);
+            //*/
+        }
+
+        private async Task RawSendAsync(ConnectionContext connection)
+        {
             var lines = new string[]
             {
                 "{\"payloadType\":\"INIT\",\"source\":\"1\"}",
@@ -55,13 +75,14 @@ namespace TerminalGame.RelayServer.WithBedrock
                 "{\"payloadType\":\"MESSAGE\",\"destination\":\"0\",\"source\":\"1\",\"payload\":\"Payload9\"}",
             };
 
+
             foreach (var line in lines)
             {
-                WriteLineHeader(_connection, line);
-                WriteLine(_connection, Encoding.UTF8, line);
+                WriteLineHeader(connection, line);
+                WriteLine(connection, Encoding.UTF8, line);
             }
 
-            await _connection.Transport.Output.FlushAsync(_hostApplicationLifetime.ApplicationStopping);
+            await connection.Transport.Output.FlushAsync(_hostApplicationLifetime.ApplicationStopping);
 
             static void WriteLineHeader(ConnectionContext connection, string line)
             {
