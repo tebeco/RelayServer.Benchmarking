@@ -18,13 +18,14 @@ namespace TerminalGame.RelayServer.WithBedrock
                 return false;
             }
 
+            var rawPayload = input.Slice(sequenceReader.Position, length);
+
             bool completed = false;
             string payloadType = default!;
             string source = default!;
             string destination = default!;
             string payload = default!;
 
-            var rawPayload = input.Slice(sequenceReader.Position, length);
             var reader = new Utf8JsonReader(rawPayload, isFinalBlock: true, state: default);
             reader.CheckRead();
 

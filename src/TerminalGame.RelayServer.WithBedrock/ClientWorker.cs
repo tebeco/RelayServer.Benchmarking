@@ -37,17 +37,17 @@ namespace TerminalGame.RelayServer.WithBedrock
             }
 
             var protocol = new MyClientProtocol(_connection);
-            await protocol.SendAsync(new InitMessage("1"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload0"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload1"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload2"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload3"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload4"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload5"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload6"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload7"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload8"));
-            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload9"));
+            await protocol.SendAsync(new InitMessage("1"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload0"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload1"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload2"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload3"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload4"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload5"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload6"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload7"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload8"), cancellationToken);
+            await protocol.SendAsync(new PayloadMessage("1", "0", "Payload9"), cancellationToken);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
