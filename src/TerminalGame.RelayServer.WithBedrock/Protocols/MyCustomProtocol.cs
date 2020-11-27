@@ -6,12 +6,13 @@ using Microsoft.Extensions.Hosting;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {
-    public class MyCustomProtocol : ConnectionHandler
+    public class MyCustomProtocol<TMessageReader, TMessage> : ConnectionHandler
+        where TMessageReader : IMessageReader<TMessage>, new()
     {
         private readonly ILogger _logger;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-        public MyCustomProtocol(ILogger<MyCustomProtocol> logger, IHostApplicationLifetime hostApplicationLifetime)
+        public MyCustomProtocol(ILogger<MyCustomProtocol<TMessageReader, TMessage>> logger, IHostApplicationLifetime hostApplicationLifetime)
         {
             _logger = logger;
             _hostApplicationLifetime = hostApplicationLifetime;
@@ -20,7 +21,7 @@ namespace TerminalGame.RelayServer.WithBedrock
         public override async Task OnConnectedAsync(ConnectionContext connection)
         {
             // Use a length prefixed protocol
-            var protocol = new MyRequestMessageReader();
+            var protocol = new TMessageReader();
             var reader = connection.CreateReader();
 
             while (!_hostApplicationLifetime.ApplicationStopping.IsCancellationRequested)
@@ -30,9 +31,16 @@ namespace TerminalGame.RelayServer.WithBedrock
                     var result = await reader.ReadAsync(protocol);
                     var message = result.Message;
 
-                    if (message is PayloadMessage payloadMessage)
+                    int? payloadLength = message switch
                     {
-                        _logger.LogInformation("Received a {MessageType} with an inner payload of {Length} bytes", typeof(PayloadMessage).Name, payloadMessage.Payload.Length);
+                        PayloadRecordMessage msg => msg.Payload.Length,
+                        PayloadStructMessage msg => msg.Payload.Length,
+                        _ => null
+                    };
+
+                    if (payloadLength is not null)
+                    {
+                        _logger.LogInformation("Received a {MessageType} with an inner payload of {Length} bytes", message.GetType().Name, payloadLength);
                     }
 
                     if (result.IsCompleted)

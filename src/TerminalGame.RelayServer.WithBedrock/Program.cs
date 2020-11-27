@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using TerminalGame.RelayServer.WithBedrock.WithRecord;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {
@@ -27,7 +27,8 @@ namespace TerminalGame.RelayServer.WithBedrock
                 {
                     serverBuilder.UseSockets(sockets =>
                     {
-                        sockets.ListenLocalhost(530, builder => builder.UseConnectionLogging().UseConnectionHandler<MyCustomProtocol>());
+                        sockets.ListenLocalhost(530, builder => builder.UseConnectionLogging()
+                                                                       .UseConnectionHandler<MyCustomProtocol<MyRequestRecordMessageReader, MyRequestRecordMessage>>());
                     })
                     .Build();
                 })

@@ -6,26 +6,26 @@ using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace TerminalGame.RelayServer.WithBedrock
+namespace TerminalGame.RelayServer.WithBedrock.WithRecord
 {
-    public class MyRequestMessageWriter : IMessageWriter<MyRequestMessage>
+    public class MyRequestRecordMessageWriter : IMessageWriter<MyRequestRecordMessage>
     {
-        public void WriteMessage(MyRequestMessage message, IBufferWriter<byte> stream)
+        public void WriteMessage(MyRequestRecordMessage message, IBufferWriter<byte> stream)
         {
             WriteHeaders(message, stream);
             WriteContent(message, stream);
         }
 
-        private static void WriteHeaders(MyRequestMessage message, IBufferWriter<byte> stream)
+        private static void WriteHeaders(MyRequestRecordMessage message, IBufferWriter<byte> stream)
         {
             var size = MyRequestMessageExtensions.GetMessageLength(message);
 
             var sizeSpan = stream.GetSpan(4);
             BinaryPrimitives.WriteInt32BigEndian(sizeSpan, size);
-            stream.Write(sizeSpan[..4]);
+            stream.Advance(4);
         }
 
-        private static void WriteContent(MyRequestMessage message, IBufferWriter<byte> stream)
+        private static void WriteContent(MyRequestRecordMessage message, IBufferWriter<byte> stream)
         {
             var reusableWriter = ReusableUtf8JsonWriter.Get(stream);
 
@@ -37,10 +37,10 @@ namespace TerminalGame.RelayServer.WithBedrock
 
                 switch (message)
                 {
-                    case InitMessage m:
+                    case InitRecordMessage m:
                         WriteInitMessage(m, writer);
                         break;
-                    case PayloadMessage m:
+                    case PayloadRecordMessage m:
                         WritePayLoadMessage(m, writer);
                         break;
                     default:
@@ -57,13 +57,13 @@ namespace TerminalGame.RelayServer.WithBedrock
             }
         }
 
-        private static void WriteInitMessage(InitMessage message, Utf8JsonWriter writer)
+        private static void WriteInitMessage(InitRecordMessage message, Utf8JsonWriter writer)
         {
             WritePayloadType(message, writer);
             WriteSource(message, writer);
         }
 
-        private static void WritePayLoadMessage(PayloadMessage message, Utf8JsonWriter writer)
+        private static void WritePayLoadMessage(PayloadRecordMessage message, Utf8JsonWriter writer)
         {
             WritePayloadType(message, writer);
             WriteSource(message, writer);
@@ -75,7 +75,7 @@ namespace TerminalGame.RelayServer.WithBedrock
         public static readonly JsonEncodedText PayloadTypePropertyNameBytes = JsonEncodedText.Encode(PayloadTypePropertyName);
         public static readonly JsonEncodedText PayloadTypeInitPropertyValue = JsonEncodedText.Encode(MyPayloadTypeStrings.Init);
         public static readonly JsonEncodedText PayloadTypePayloadPropertyValue = JsonEncodedText.Encode(MyPayloadTypeStrings.Payload);
-        private static void WritePayloadType(MyRequestMessage message, Utf8JsonWriter writer)
+        private static void WritePayloadType(MyRequestRecordMessage message, Utf8JsonWriter writer)
         {
             var payloadType = message.PayloadType switch
             {
@@ -89,21 +89,21 @@ namespace TerminalGame.RelayServer.WithBedrock
 
         public const string SourcePropertyName = "source";
         public static readonly JsonEncodedText SourcePropertyNameBytes = JsonEncodedText.Encode(SourcePropertyName);
-        private static void WriteSource(MyRequestMessage message, Utf8JsonWriter writer)
+        private static void WriteSource(MyRequestRecordMessage message, Utf8JsonWriter writer)
         {
             writer.WriteString(SourcePropertyNameBytes, message.Source);
         }
 
         public const string DestinationPropertyName = "destination";
         public static readonly JsonEncodedText DestinationPropertyNameBytes = JsonEncodedText.Encode(DestinationPropertyName);
-        private static void WriteDestination(PayloadMessage message, Utf8JsonWriter writer)
+        private static void WriteDestination(PayloadRecordMessage message, Utf8JsonWriter writer)
         {
             writer.WriteString(DestinationPropertyNameBytes, message.Destination);
         }
 
         public const string PayloadPropertyName = "payload";
         public static readonly JsonEncodedText PayloadPropertyNameBytes = JsonEncodedText.Encode(PayloadPropertyName);
-        private static void WritePayload(PayloadMessage message, Utf8JsonWriter writer)
+        private static void WritePayload(PayloadRecordMessage message, Utf8JsonWriter writer)
         {
             writer.WriteString(PayloadPropertyNameBytes, message.Payload);
         }

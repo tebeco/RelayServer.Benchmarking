@@ -12,14 +12,14 @@ namespace TerminalGame.RelayServer.Handlers
         private bool MessageIncomplete { get; set; }
 
         private byte[]? AccumulateBuffer { get; set; }
-        
-        
+
+
         private int Consumed { get; set; }
-            
-        
+
+
         public IEnumerable<SocketMessage?> DecodeBuffer(byte[] buffer, long offset, long size)
         {
-             
+
             //AccumulateMessage += Encoding.UTF8.GetString(buffer, (int) offset, (int) size);
 
             if (MessageIncomplete && AccumulateBuffer is not null)
@@ -29,7 +29,7 @@ namespace TerminalGame.RelayServer.Handlers
 
             while (Consumed != size && !MessageIncomplete)
             {
-                var span = Encoding.UTF8.GetString(buffer, (int) offset, (int) size).AsSpan();
+                var span = Encoding.UTF8.GetString(buffer, (int)offset, (int)size).AsSpan();
                 //var span = new ReadOnlySpan<char>();
                 //var ff = Encoding.UTF8.GetChars(buffer, span);
                 //var span = AccumulateMessage.AsSpan();
@@ -96,7 +96,7 @@ namespace TerminalGame.RelayServer.Handlers
 
             return message;
         }
-        
+
         private static byte[] CombineBuffers(byte[] first, byte[] second)
         {
             byte[] bytes = new byte[first.Length + second.Length];

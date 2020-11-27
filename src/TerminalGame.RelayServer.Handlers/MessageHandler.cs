@@ -14,7 +14,7 @@ namespace TerminalGame.RelayServer.Handlers
 
         public IEnumerable<SocketMessage?> DecodeBuffer(byte[] buffer, long offset, long size)
         {
-            AccumulateMessage += Encoding.UTF8.GetString(buffer, (int) offset, (int) size);
+            AccumulateMessage += Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
 
             while (AccumulateMessage.Length != 0 && !MessageIncomplete)
             {

@@ -23,8 +23,42 @@ namespace TerminalGame.RelayServer.WithBedrock
         Payload
     }
 
-    public abstract record MyRequestMessage(string Source, MyPayloadType PayloadType);
+     public abstract record MyRequestRecordMessage(string Source, MyPayloadType PayloadType);
 
-    public record InitMessage(string Source) : MyRequestMessage(Source, MyPayloadType.Init);
-    public record PayloadMessage(string Source, string Destination, string Payload) : MyRequestMessage(Source, MyPayloadType.Payload);
+    public record InitRecordMessage(string Source) : MyRequestRecordMessage(Source, MyPayloadType.Init);
+    public record PayloadRecordMessage(string Source, string Destination, string Payload) : MyRequestRecordMessage(Source, MyPayloadType.Payload);
+
+    public interface IStructMessage
+    {
+        MyPayloadType PayloadType { get; }
+        string Source { get; }
+    }
+
+    public struct InitStructMessage : IStructMessage
+    {
+        public InitStructMessage(string source)
+        {
+            PayloadType = MyPayloadType.Init;
+            Source = source;
+        }
+        public MyPayloadType PayloadType { get; }
+
+        public string Source { get; }
+    }
+
+    public struct PayloadStructMessage : IStructMessage
+    {
+        public PayloadStructMessage(string source, string destination, string payload)
+        {
+            PayloadType = MyPayloadType.Payload;
+            Source = source;
+            Destination = destination;
+            Payload = payload;
+        }
+
+        public MyPayloadType PayloadType { get; }
+        public string Source { get; }
+        public string Destination { get; }
+        public string Payload { get; }
+    }
 }

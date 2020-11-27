@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Buffers;
-using System.Buffers.Binary;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TerminalGame.RelayServer.WithBedrock.WithRecord;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {
@@ -39,20 +37,20 @@ namespace TerminalGame.RelayServer.WithBedrock
                 return;
             }
 
-            var protocol = new MyClientProtocol(_connection);
+            var protocol = new MyClientProtocol<MyRequestRecordMessageWriter, MyRequestRecordMessage>(_connection);
             while (!_hostApplicationLifetime.ApplicationStopping.IsCancellationRequested)
             {
-                await protocol.SendAsync(new InitMessage("1"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload0"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload1"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload2"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload3"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload4"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload5"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload6"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload7"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload8"), _hostApplicationLifetime.ApplicationStopping);
-                await protocol.SendAsync(new PayloadMessage("1", "0", "Payload9"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new InitRecordMessage("1"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload0"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload1"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload2"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload3"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload4"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload5"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload6"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload7"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload8"), _hostApplicationLifetime.ApplicationStopping);
+                await protocol.SendAsync(new PayloadRecordMessage("1", "0", "Payload9"), _hostApplicationLifetime.ApplicationStopping);
 
                 Thread.Sleep(100);
             }
