@@ -1,4 +1,4 @@
-﻿namespace TerminalGame.RelayServer.Domain
+﻿namespace TerminalGame.RelayServer.WithBedrock
 {
     public enum MyPayloadType
     {

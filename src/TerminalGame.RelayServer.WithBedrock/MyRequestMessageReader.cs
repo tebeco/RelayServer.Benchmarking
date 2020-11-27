@@ -2,12 +2,8 @@
 using Microsoft.AspNetCore.Internal;
 using System;
 using System.Buffers;
-using System.Buffers.Binary;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata;
 using System.Text.Json;
-using TerminalGame.RelayServer.Domain;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {

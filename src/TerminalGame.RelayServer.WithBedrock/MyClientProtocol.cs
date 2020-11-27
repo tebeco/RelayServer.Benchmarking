@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Connections;
 using System.Threading;
 using System.Threading.Tasks;
-using TerminalGame.RelayServer.Domain;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {

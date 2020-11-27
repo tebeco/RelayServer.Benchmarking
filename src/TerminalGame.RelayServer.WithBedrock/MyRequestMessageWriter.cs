@@ -5,7 +5,6 @@ using System.Buffers;
 using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Text.Json;
-using TerminalGame.RelayServer.Domain;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {
