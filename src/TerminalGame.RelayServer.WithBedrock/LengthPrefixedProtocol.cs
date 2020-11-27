@@ -5,9 +5,9 @@ using System.Buffers.Binary;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {
-    public class LengthPrefixedProtocol : IMessageReader<Message>, IMessageWriter<Message>
+    public class LengthPrefixedProtocol : IMessageReader<GenericMessage>, IMessageWriter<GenericMessage>
     {
-        public bool TryParseMessage(in ReadOnlySequence<byte> input, ref SequencePosition consumed, ref SequencePosition examined, out Message message)
+        public bool TryParseMessage(in ReadOnlySequence<byte> input, ref SequencePosition consumed, ref SequencePosition examined, out GenericMessage message)
         {
             var reader = new SequenceReader<byte>(input);
 
@@ -30,14 +30,14 @@ namespace TerminalGame.RelayServer.WithBedrock
             }
 
             var payload = input.Slice(reader.Position, length);
-            message = new Message(payload);
+            message = new GenericMessage(payload);
 
             consumed = payload.End;
             examined = consumed;
             return true;
         }
 
-        public void WriteMessage(Message message, IBufferWriter<byte> output)
+        public void WriteMessage(GenericMessage message, IBufferWriter<byte> output)
         {
             var lengthBuffer = output.GetSpan(4);
             BinaryPrimitives.WriteInt32BigEndian(lengthBuffer, (int)message.Payload.Length);
@@ -49,18 +49,20 @@ namespace TerminalGame.RelayServer.WithBedrock
         }
     }
 
-    public struct Message
+    public struct GenericMessage
     {
-        public Message(byte[] payload) : this(new ReadOnlySequence<byte>(payload))
+        public GenericMessage(byte[] payload) : this(new ReadOnlySequence<byte>(payload))
         {
 
         }
 
-        public Message(ReadOnlySequence<byte> payload)
+        public GenericMessage(ReadOnlySequence<byte> payload)
         {
             Payload = payload;
         }
 
         public ReadOnlySequence<byte> Payload { get; }
     }
+
+
 }
