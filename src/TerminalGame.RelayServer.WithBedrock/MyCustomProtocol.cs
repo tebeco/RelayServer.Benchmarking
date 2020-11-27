@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using TerminalGame.RelayServer.Domain;
 
 namespace TerminalGame.RelayServer.WithBedrock
 {
@@ -17,9 +18,8 @@ namespace TerminalGame.RelayServer.WithBedrock
         public override async Task OnConnectedAsync(ConnectionContext connection)
         {
             // Use a length prefixed protocol
-            var protocol = new LengthPrefixedProtocol();
+            var protocol = new MyRequestMessageReader();
             var reader = connection.CreateReader();
-            //var writer = connection.CreateWriter();
 
             while (true)
             {
@@ -28,13 +28,13 @@ namespace TerminalGame.RelayServer.WithBedrock
                     var result = await reader.ReadAsync(protocol);
                     var message = result.Message;
 
-                    _logger.LogInformation("Received a message of {Length} bytes", message.Payload.Length);
+                    if(message is PayloadMessage payloadMessage )
+                    _logger.LogInformation("Received a message of {Length} bytes", payloadMessage.Payload.Length);
 
                     if (result.IsCompleted)
                     {
                         break;
                     }
-                    //await writer.WriteAsync(protocol, message);
                 }
                 finally
                 {
